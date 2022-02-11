@@ -19,10 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.caldas.noteapp.R
 import com.caldas.noteapp.components.NoteButton
 import com.caldas.noteapp.components.NoteInputText
+import com.caldas.noteapp.model.Note
 
 @ExperimentalComposeUiApi
 @Composable
-fun NoteScreen() {
+fun NoteScreen(
+    notes: List<Note>,
+    onAddNote: (Note) -> Unit,
+    onRemoveNote: (Note) -> Unit,
+) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     Column(modifier = Modifier.padding(6.dp)) {
@@ -59,7 +64,15 @@ fun NoteScreen() {
                     }
                 }
             )
-            NoteButton(text = "Save", onClick = { /*TODO*/ })
+            NoteButton(
+                text = "Save",
+                onClick = {
+                    if (title.isNotEmpty() && description.isNotEmpty()) {
+                        title = ""
+                        description = ""
+                    }
+                }
+            )
         }
     }
 }
@@ -68,5 +81,5 @@ fun NoteScreen() {
 @Preview(showBackground = true)
 @Composable
 fun NoteScreenPreview() {
-    NoteScreen()
+    NoteScreen(notes = emptyList(), onAddNote = {}, onRemoveNote = {})
 }

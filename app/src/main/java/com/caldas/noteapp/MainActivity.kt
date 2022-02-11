@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.tooling.preview.Preview
+import com.caldas.noteapp.model.Note
 import com.caldas.noteapp.screen.NoteScreen
 import com.caldas.noteapp.ui.theme.NoteAppTheme
 
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
             NoteAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    NoteScreen()
+                    NoteScreen(notes = emptyList(), onAddNote = {}, onRemoveNote = {})
                 }
             }
         }
@@ -30,12 +31,4 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NoteAppTheme {
-        Greeting("Android")
-    }
 }
