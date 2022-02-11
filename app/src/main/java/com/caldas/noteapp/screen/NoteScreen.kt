@@ -1,5 +1,6 @@
 package com.caldas.noteapp.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ fun NoteScreen(
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    val context = LocalContext.current
     Column(modifier = Modifier.padding(6.dp)) {
         TopAppBar(
             title = {
@@ -73,8 +76,10 @@ fun NoteScreen(
                 text = "Save",
                 onClick = {
                     if (title.isNotEmpty() && description.isNotEmpty()) {
+                        onAddNote(Note(title = title, description = description))
                         title = ""
                         description = ""
+                        Toast.makeText(context, "Note added", Toast.LENGTH_SHORT).show()
                     }
                 }
             )
@@ -82,7 +87,9 @@ fun NoteScreen(
         Divider(modifier = Modifier.padding(10.dp))
         LazyColumn {
             items(notes) { note ->
-                NoteRow(note = note, onNoteClicked = {})
+                NoteRow(note = note, onNoteClicked = {
+                    onRemoveNote(note)
+                })
             }
         }
     }
@@ -105,8 +112,7 @@ fun NoteRow(
         Column(
             modifier
                 .padding(horizontal = 14.dp, vertical = 6.dp)
-                .clickable {
-                },
+                .clickable { onNoteClicked(note) },
             horizontalAlignment = Alignment.Start
         ) {
             Text(
