@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.tooling.preview.Preview
+import com.caldas.noteapp.data.NotesDataSource
 import com.caldas.noteapp.model.Note
 import com.caldas.noteapp.screen.NoteScreen
 import com.caldas.noteapp.ui.theme.NoteAppTheme
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
             NoteAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    NoteScreen(notes = emptyList(), onAddNote = {}, onRemoveNote = {})
+                    NoteScreen(notes = NotesDataSource().loadNotes(), onAddNote = {}, onRemoveNote = {})
                 }
             }
         }
