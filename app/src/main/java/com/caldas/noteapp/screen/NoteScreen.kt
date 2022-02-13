@@ -26,6 +26,7 @@ import com.caldas.noteapp.components.NoteButton
 import com.caldas.noteapp.components.NoteInputText
 import com.caldas.noteapp.data.NotesDataSource
 import com.caldas.noteapp.model.Note
+import com.caldas.noteapp.util.formatDate
 
 @ExperimentalComposeUiApi
 @Composable
@@ -122,10 +123,10 @@ fun NoteRow(
                 text = note.description,
                 style = MaterialTheme.typography.subtitle1
             )
-//            Text(
-//                text = note.entryDate.format(DateTimeFormatter.ofPattern("EEE, d MMM")),
-//                style = MaterialTheme.typography.caption
-//            )
+            Text(
+                text = formatDate(note.entryDate.time),
+                style = MaterialTheme.typography.caption
+            )
         }
     }
 }
