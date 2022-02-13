@@ -3,6 +3,8 @@ package com.caldas.noteapp.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.caldas.noteapp.util.DateConverter
 import java.time.Instant
 import java.util.Date
 import java.util.UUID
@@ -19,6 +21,7 @@ data class Note(
     @ColumnInfo(name = "NOTE_DESCRIPTION")
     val description: String,
 
+    @TypeConverters(DateConverter::class)
     @ColumnInfo(name = "NOTE_ENTRY_DATE")
     val entryDate: Date = Date.from(Instant.now())
 )
