@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @ExperimentalFoundationApi
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +33,20 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @Composable
 fun NotesApp(noteViewModel: NoteViewModel) {
     val notesList = noteViewModel.noteList.collectAsState().value
+    val title = noteViewModel.title
+    val description = noteViewModel.description
     NoteScreen(
+        title = title,
+        description = description,
         notes = notesList,
+        isUpdating = noteViewModel.isUpdating.value,
         onAddNote = { noteViewModel.addNote(it) },
-        onRemoveNote = { noteViewModel.removeNote(it) }
+        onRemoveNote = { noteViewModel.removeNote(it) },
+        onUpdateNote = { noteViewModel.updateNote(it) }
     )
 }

@@ -1,7 +1,8 @@
 package com.caldas.noteapp.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,15 +29,18 @@ import com.caldas.noteapp.data.NotesDataSource
 import com.caldas.noteapp.model.Note
 import com.caldas.noteapp.util.formatDate
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @Composable
 fun NoteScreen(
+    title: MutableState<String>,
+    description: MutableState<String>,
     notes: List<Note>,
+    isUpdating: Boolean,
     onAddNote: (Note) -> Unit,
     onRemoveNote: (Note) -> Unit,
+    onUpdateNote: (Note) -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
     val context = LocalContext.current
     Column(modifier = Modifier.padding(6.dp)) {
         TopAppBar(
@@ -54,32 +58,33 @@ fun NoteScreen(
         ) {
             NoteInputText(
                 modifier = Modifier.padding(top = 9.dp, bottom = 8.dp),
-                text = title,
+                text = title.value,
                 label = "Title",
                 onTextChange = {
                     if (it.all { char -> char.isLetter() || char.isWhitespace()}) {
-                        title = it
+                        title.value = it
                     }
                 }
             )
             NoteInputText(
                 modifier = Modifier.padding(top = 9.dp, bottom = 8.dp),
-                text = description,
+                text = description.value,
                 label = "Add a note",
                 onTextChange = {
                     if (it.all { char -> char.isLetter() || char.isWhitespace()}) {
-                        description = it
+                        description.value = it
                     }
                 }
             )
             NoteButton(
-                text = "Save",
+                text = if (!isUpdating) "Save" else "Update",
                 onClick = {
-                    if (title.isNotEmpty() && description.isNotEmpty()) {
-                        onAddNote(Note(title = title, description = description))
-                        title = ""
-                        description = ""
-                        Toast.makeText(context, "Note added", Toast.LENGTH_SHORT).show()
+                    if (title.value.isNotEmpty() && description.value.isNotEmpty()) {
+                        onAddNote(Note(title = title.value, description = description.value))
+                        title.value = ""
+                        description.value = ""
+                        val toastMessage = if (!isUpdating) "Note added" else "Note updated"
+                        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
             )
@@ -87,19 +92,23 @@ fun NoteScreen(
         Divider(modifier = Modifier.padding(10.dp))
         LazyColumn {
             items(notes) { note ->
-                NoteRow(note = note, onNoteClicked = {
-                    onRemoveNote(note)
-                })
+                NoteRow(
+                    note = note,
+                    onNoteClicked = { onRemoveNote(note) },
+                    onNoteLongClick = { onUpdateNote(note) }
+                )
             }
         }
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun NoteRow(
     modifier: Modifier = Modifier,
     note: Note,
-    onNoteClicked: (Note) -> Unit
+    onNoteClicked: (Note) -> Unit,
+    onNoteLongClick: (Note) -> Unit
 ) {
     Surface(
         modifier = modifier
@@ -112,7 +121,10 @@ fun NoteRow(
         Column(
             modifier
                 .padding(horizontal = 14.dp, vertical = 6.dp)
-                .clickable { onNoteClicked(note) },
+                .combinedClickable (
+                    onClick =  { onNoteClicked(note) },
+                    onLongClick = { onNoteLongClick(note) }
+                ),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
@@ -131,9 +143,18 @@ fun NoteRow(
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @Preview(showBackground = true)
 @Composable
 fun NoteScreenPreview() {
-    NoteScreen(notes = NotesDataSource().loadNotes(), onAddNote = {}, onRemoveNote = {})
+    NoteScreen(
+        title = remember { mutableStateOf("") },
+        description = remember { mutableStateOf("") },
+        notes = NotesDataSource().loadNotes(),
+        isUpdating = false,
+        onAddNote = {},
+        onRemoveNote = {},
+        onUpdateNote = {}
+    )
 }

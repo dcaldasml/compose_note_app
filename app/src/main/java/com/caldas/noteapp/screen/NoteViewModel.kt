@@ -1,6 +1,6 @@
 package com.caldas.noteapp.screen
 
-import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.caldas.noteapp.model.Note
@@ -19,6 +19,10 @@ class NoteViewModel @Inject constructor(private val repository: NoteRepository) 
 
     private val _noteList = MutableStateFlow<List<Note>>(emptyList())
     val noteList = _noteList.asStateFlow()
+    val title = mutableStateOf("")
+    val description = mutableStateOf("")
+    var isUpdating = mutableStateOf(false)
+    private lateinit var updatingNote: Note
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -28,9 +32,22 @@ class NoteViewModel @Inject constructor(private val repository: NoteRepository) 
         }
     }
 
-    fun addNote(note: Note) = viewModelScope.launch { repository.addNote(note) }
+    fun addNote(note: Note) = viewModelScope.launch {
+        if (isUpdating.value) {
+            val c = updatingNote.copy(title = note.title, description = note.description)
+            repository.updateNote(c)
+            isUpdating.value = false
+        } else {
+            repository.addNote(note)
+        }
+    }
 
-    fun updateNote(note: Note) = viewModelScope.launch { repository.updateNote(note) }
+    fun updateNote(note: Note) {
+        title.value = note.title
+        description.value = note.description
+        isUpdating.value = true
+        updatingNote = note
+    }
 
     fun removeNote(note: Note) = viewModelScope.launch { repository.deleteNote(note) }
 
