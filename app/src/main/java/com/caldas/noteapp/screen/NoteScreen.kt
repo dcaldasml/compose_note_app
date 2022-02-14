@@ -2,6 +2,7 @@ package com.caldas.noteapp.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -39,7 +40,8 @@ fun NoteScreen(
     isUpdating: Boolean,
     onAddNote: (Note) -> Unit,
     onRemoveNote: (Note) -> Unit,
-    onUpdateNote: (Note) -> Unit
+    onUpdateNote: (Note) -> Unit,
+    onRemoveAllNotes: () -> Unit
 ) {
     val context = LocalContext.current
     Column(modifier = Modifier.padding(6.dp)) {
@@ -48,9 +50,10 @@ fun NoteScreen(
                 Text(text = stringResource(id = R.string.app_name))
             },
             actions = {
-                Icon(imageVector = Icons.Rounded.Notifications, contentDescription = "Icon")
+                Icon(imageVector = Icons.Rounded.Delete, contentDescription = "Icon")
             },
-            backgroundColor = Color(0xFFDADFE3)
+            backgroundColor = Color(0xFFDADFE3),
+            modifier = Modifier.clickable { onRemoveAllNotes() }
         )
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -155,6 +158,7 @@ fun NoteScreenPreview() {
         isUpdating = false,
         onAddNote = {},
         onRemoveNote = {},
-        onUpdateNote = {}
+        onUpdateNote = {},
+        onRemoveAllNotes = {}
     )
 }

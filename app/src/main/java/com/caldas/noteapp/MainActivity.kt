@@ -47,6 +47,7 @@ fun NotesApp(noteViewModel: NoteViewModel) {
         isUpdating = noteViewModel.isUpdating.value,
         onAddNote = { noteViewModel.addNote(it) },
         onRemoveNote = { noteViewModel.removeNote(it) },
-        onUpdateNote = { noteViewModel.updateNote(it) }
+        onUpdateNote = { noteViewModel.updateNote(it) },
+        onRemoveAllNotes = { noteViewModel.removeAllNotes() }
     )
 }
